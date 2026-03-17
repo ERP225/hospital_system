@@ -1,33 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Billing</title>
-<link rel="stylesheet" href="/static/style.css">
+    <title>Billing</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
 
-<h2>Billing</h2>
+<div class="container">
+    <h2>Billing</h2>
 
-<form method="POST">
-<lable>Name</lable>
-<select name="patient">
+    <form method="POST">
+        <label>Name</label>
+        <select name="patient">
+            {% for p in patients %}
+            <option value="{{p[0]}}">{{p[1]}}</option>
+            {% endfor %}
+        </select>
 
-{% for p in patients %}
+        <label>Service Name</label>
+        <input type="text" name="service" placeholder="Service">
 
-<option value="{{p[0]}}">{{p[1]}}</option>
+        <label>Amount</label>
+        <input type="number" name="amount" placeholder="Amount">
 
-{% endfor %}
-
-</select><br>
-
-<lable>Service Name</lable><input type="text" name="service" placeholder="Service"><br>
-
-<lable>Amount</lable><input type="number" name="amount" placeholder="Amount"><br>
-
-<button>Create Bill</button>
-
-</form>
+        <button>Create Bill</button>
+    </form>
+</div>
 
 </body>
 </html>
