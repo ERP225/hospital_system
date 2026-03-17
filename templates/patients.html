@@ -52,11 +52,11 @@ display:none;
 {% for p in patients %}
 
 <tr>
-<td>{{p[0]}}</td>
-<td>{{p[1]}}</td>
-<td>{{p[2]}}</td>
-<td>{{p[3]}}</td>
-<td>{{p[4]}}</td>
+<td>{{p['id']}}</td>
+<td>{{p['name']}}</td>
+<td>{{p['age']}}</td>
+<td>{{p['gender']}}</td>
+<td>{{p['mobile']}}</td>
 
 <td class="action">
 <a href="/edit/{{ p['id'] }}">Edit</a>
