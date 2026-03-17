@@ -201,7 +201,7 @@ def add_user():
 def billing():
 	con=deb()
 	cur=con.cursor()
-	 cur.execute("SELECT * FROM patients")
+	cur.execute("SELECT * FROM patients")
     patients = cur.fetchall()
 	
 	if request.method =="POST":
