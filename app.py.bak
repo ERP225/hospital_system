@@ -252,6 +252,21 @@ def edit_patient(id):
     con.close()
 
     return render_template("edit_patient.html", patient=patient)
+#DELETE PATIENT
+# DELETE PATIENT
+@app.route("/delete/<int:id>")
+def delete_patient(id):
+    if "username" not in session:
+        return redirect("/")
+
+    con = db()
+    cur = con.cursor()
+
+    cur.execute("DELETE FROM patients WHERE id=?", (id,))
+    con.commit()
+    con.close()
+
+    return redirect("/patients")
 
 # EXPORT TO EXCEL
 @app.route("/export_patients")
