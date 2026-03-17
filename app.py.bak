@@ -207,7 +207,7 @@ def add_user():
 def billing():
     con = db()
     cur = con.cursor()
-
+	
     cur.execute("SELECT * FROM patients")
     patients = cur.fetchall()
 
@@ -252,7 +252,7 @@ def edit_patient(id):
     con.close()
 
     return render_template("edit_patient.html", patient=patient)
-#DELETE PATIENT
+
 # DELETE PATIENT
 @app.route("/delete/<int:id>")
 def delete_patient(id):
