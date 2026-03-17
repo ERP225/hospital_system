@@ -203,6 +203,7 @@ def add_user():
     return render_template("add_user.html")
 
 # BILLING
+@app.route("/billing", methods=["GET","POST"])
 def billing():
     con = db()
     cur = con.cursor()

@@ -225,7 +225,8 @@ def billing():
         return redirect("/dashboard")
 
     return render_template("billing.html", patients=patients)
-# EDIT PATIENT
+#EDIT PATIENT	
+@app.route("/edit/<int:id>", methods=["GET","POST"])
 def edit_patient(id):
     con = db()
     cur = con.cursor()
@@ -250,8 +251,8 @@ def edit_patient(id):
     con.close()
 
     return render_template("edit_patient.html", patient=patient)
-
-# DELETE PATIENT
+#DELETE
+@app.route("/delete/<int:id>")
 def delete_patient(id):
     if "username" not in session:
         return redirect("/")
