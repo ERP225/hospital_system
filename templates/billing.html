@@ -10,7 +10,7 @@
 <h2>Billing</h2>
 
 <form method="POST">
-
+<lable>Name</lable>
 <select name="patient">
 
 {% for p in patients %}
@@ -21,9 +21,9 @@
 
 </select><br>
 
-<input type="text" name="service" placeholder="Service"><br>
+<lable>Service Name</lable><input type="text" name="service" placeholder="Service"><br>
 
-<input type="number" name="amount" placeholder="Amount"><br>
+<lable>Amount</lable><input type="number" name="amount" placeholder="Amount"><br>
 
 <button>Create Bill</button>
 
