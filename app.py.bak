@@ -208,11 +208,11 @@ def add_user():
 # ADD BILLING
 @app.route("/billing", methods=["GET", "POST"])
 def billing():
-    con = db()   # fixed function name
+    con = db()
     cur = con.cursor()
 
     cur.execute("SELECT * FROM patients")
-    patients = cur.fetchall()   # fixed indentation
+    patients = cur.fetchall()
 
     if request.method == "POST":
         pid = request.form.get("patient")
@@ -229,7 +229,7 @@ def billing():
 
         return redirect("/dashboard")
 
-    return render_template("billing.html", patients=patients)
+return render_template("billing.html", patients=patients)
 	
 	
 #EDIT PATIENT 

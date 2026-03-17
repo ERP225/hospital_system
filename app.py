@@ -206,6 +206,7 @@ def add_user():
 
 
 # ADD BILLING
+# ADD BILLING
 @app.route("/billing", methods=["GET", "POST"])
 def billing():
     con = db()
@@ -229,7 +230,8 @@ def billing():
 
         return redirect("/dashboard")
 
-return render_template("billing.html", patients=patients)
+    # ✅ THIS LINE MUST BE INSIDE FUNCTION
+    return render_template("billing.html", patients=patients)
 	
 	
 #EDIT PATIENT 
