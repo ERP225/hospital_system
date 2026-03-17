@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Patient</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>Add Patient</h2>
+
+<form method="POST">
+
+<input type="text" name="name" placeholder="Name"><br>
+
+<input type="number" name="age" placeholder="Age"><br>
+
+<select name="gender">
+
+<option>Male</option>
+<option>Female</option>
+
+</select><br>
+
+<input type="text" name="mobile" placeholder="Mobile"><br>
+
+<button>Add Patient</button>
+<a href="/export_patients">
+    <button>Download Excel</button>
+</a>
+
+</form>
+
+</body>
+</html>

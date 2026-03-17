@@ -37,6 +37,10 @@ display:none;
 <h2>Patients List</h2>
 
 <button onclick="window.print()">Print</button>
+<a href="/export_patients">
+    <button>Download Excel</button>
+</a>
+
 
 <table border="1">
 
@@ -60,7 +64,9 @@ display:none;
 
 <td class="action">
 <a href="/edit/{{ p['id'] }}">Edit</a>
-<a href="/delete/{{ p['id'] }}">Delete</a>
+<a href="/delete/{{ p.id }}" onclick="return confirm('Are you sure?')">
+    <button>Delete</button>
+</a>
 </td>
 
 </tr>
