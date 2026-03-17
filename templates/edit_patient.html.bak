@@ -1,0 +1,7 @@
+<form method="POST">
+    Name: <input type="text" name="name" value="{{ patient['name'] }}"><br>
+    Age: <input type="text" name="age" value="{{ patient['age'] }}"><br>
+    Gender: <input type="text" name="gender" value="{{ patient['gender'] }}"><br>
+    Mobile: <input type="text" name="mobile" value="{{ patient['mobile'] }}"><br>
+    <button type="submit">Update</button>
+</form>

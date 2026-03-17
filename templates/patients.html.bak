@@ -59,8 +59,8 @@ display:none;
 <td>{{p[4]}}</td>
 
 <td class="action">
-<a href="/edit/{{p[0]}}">Edit</a>
-<a href="/delete/{{p[0]}}">Delete</a>
+<a href="/edit/{{ p['id'] }}">Edit</a>
+<a href="/delete/{{ p['id'] }}">Delete</a>
 </td>
 
 </tr>

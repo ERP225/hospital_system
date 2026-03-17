@@ -7,7 +7,9 @@ app.secret_key = "hospital123"
 
 # DATABASE CONNECTION
 def db():
-    return sqlite3.connect("hospital.db")
+    con = sqlite3.connect("hospital.db")
+    con.row_factory = sqlite3.Row   # ✅ THIS LINE IS MUST
+    return con
 
 # CREATE TABLES (IMPORTANT FOR RENDER)
 def init_db():
