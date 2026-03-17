@@ -183,25 +183,24 @@ def edit_patient(id):
     cur = con.cursor()
 
     if request.method == "POST":
-        name = request.form.get("name")
-        age = request.form.get("age")
-        gender = request.form.get("gender")
-        mobile = request.form.get("mobile")
-
         cur.execute(
             "UPDATE patients SET name=?,age=?,gender=?,mobile=? WHERE id=?",
-            (name,age,gender,mobile,id)
+            (
+                request.form.get("name"),
+                request.form.get("age"),
+                request.form.get("gender"),
+                request.form.get("mobile"),
+                id
+            )
         )
         con.commit()
         con.close()
-
         return redirect("/patients")
 
     cur.execute("SELECT * FROM patients WHERE id=?", (id,))
     patient = cur.fetchone()
     con.close()
 
-    # ✅ ADD THIS CHECK
     if not patient:
         return "Patient not found"
 
