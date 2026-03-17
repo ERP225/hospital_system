@@ -4,22 +4,31 @@
 <title>Dashboard</title>
 <link rel="stylesheet" href="/static/style.css">
 </head>
-
+<style>
+.btn {
+    display: inline-block;
+    padding: 8px 14px;
+    background-color: green;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+</style>
 <body>
 
 <h1>Hospital Dashboard</h1>
 
-<a href="/add_patient">Add Patient</a>
+<a href="/add_patient" class="btn">Add Patient</a>
 
-<a href="/patients">View Patients</a>
+<a href="/patients" class="btn">View Patients</a>
 
-<a href="/add_doctor">Add Doctor</a>
-<a href="/appointment">Appointment</a>
-<a href="/billing">Billing</a>
+<a href="/add_doctor" class="btn">Add Doctor</a>
+<a href="/appointment" class="btn">Appointment</a>
+<a href="/billing" class="btn">Billing</a>
 
 {% if session['role'] == 'admin' %}
 
-<a href="/add_user">Add User</a>
+<a href="/add_user" class="btn">Add User</a>
 <div class="card">
 <h3>Total Patients</h3>
 <p>{{patients}}</p>
