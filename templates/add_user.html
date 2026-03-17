@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Add User</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+}
+
+form{
+width:300px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:5px;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin:5px 0;
+}
+
+button{
+background:#28a745;
+color:white;
+padding:10px;
+border:none;
+width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2 align="center">Add User</h2>
+
+<form method="POST">
+
+<label>Username</label>
+<input type="text" name="username" required>
+
+<label>Password</label>
+<input type="password" name="password" required>
+
+<label>Role</label>
+<select name="role">
+
+<option value="admin">Admin</option>
+<option value="user">User</option>
+
+</select>
+
+<button type="submit">Create User</button>
+
+</form>
+
+</body>
+</html>

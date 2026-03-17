@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Billing</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>Billing</h2>
+
+<form method="POST">
+
+<select name="patient">
+
+{% for p in patients %}
+
+<option value="{{p[0]}}">{{p[1]}}</option>
+
+{% endfor %}
+
+</select><br>
+
+<input type="text" name="service" placeholder="Service"><br>
+
+<input type="number" name="amount" placeholder="Amount"><br>
+
+<button>Create Bill</button>
+
+</form>
+
+</body>
+</html>

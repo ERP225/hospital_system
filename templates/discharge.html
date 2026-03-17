@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Discharge</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>Patient Discharge</h2>
+
+<form method="POST">
+
+<select name="patient">
+
+{% for p in patients %}
+
+<option value="{{p[0]}}">{{p[1]}}</option>
+
+{% endfor %}
+
+</select><br>
+
+<input type="date" name="date"><br>
+
+<textarea name="summary" placeholder="Discharge Summary"></textarea><br>
+
+<button>Discharge Patient</button>
+
+</form>
+
+</body>
+</html>

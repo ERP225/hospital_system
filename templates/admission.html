@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admission</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>Patient Admission</h2>
+
+<form method="POST">
+
+<select name="patient">
+
+{% for p in patients %}
+
+<option value="{{p[0]}}">{{p[1]}}</option>
+
+{% endfor %}
+
+</select><br>
+
+<input type="text" name="room" placeholder="Room Number"><br>
+
+<input type="date" name="date"><br>
+
+<button>Admit Patient</button>
+
+</form>
+
+</body>
+</html>

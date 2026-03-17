@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Patients List</title>
+
+<style>
+
+table{
+border-collapse:collapse;
+width:70%;
+}
+
+th,td{
+padding:8px;
+text-align:center;
+}
+
+@media print{
+
+button{
+display:none;
+}
+
+a{
+display:none;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Patients List</h2>
+
+<button onclick="window.print()">Print</button>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Age</th>
+<th>Gender</th>
+<th>Mobile</th>
+<th class="action">Action</th>
+</tr>
+
+{% for p in patients %}
+
+<tr>
+<td>{{p[0]}}</td>
+<td>{{p[1]}}</td>
+<td>{{p[2]}}</td>
+<td>{{p[3]}}</td>
+<td>{{p[4]}}</td>
+
+<td class="action">
+<a href="/edit/{{p[0]}}">Edit</a>
+<a href="/delete/{{p[0]}}">Delete</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>

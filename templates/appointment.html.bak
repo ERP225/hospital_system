@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Appointment</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h2>Book Appointment</h2>
+
+<form method="POST">
+
+<select name="patient">
+
+{% for p in patients %}
+
+<option value="{{p[0]}}">{{p[1]}}</option>
+
+{% endfor %}
+
+</select><br>
+
+
+<select name="doctor">
+
+{% for d in doctors %}
+
+<option value="{{d[0]}}">{{d[1]}}</option>
+
+{% endfor %}
+
+</select><br>
+
+
+<input type="date" name="date"><br>
+
+<input type="time" name="time"><br>
+
+<button>Book Appointment</button>
+
+</form>
+
+</body>
+</html>

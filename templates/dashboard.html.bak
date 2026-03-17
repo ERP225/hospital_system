@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<h1>Hospital Dashboard</h1>
+
+<a href="/add_patient">Add Patient</a><br><br>
+
+<a href="/patients">View Patients</a><br><br>
+
+<a href="/add_doctor">Add Doctor</a><br><br>
+
+{% if session['role'] == 'admin' %}
+
+<a href="/add_user">Add User</a><br><br>
+
+{% endif %}
+
+<a href="/appointment">Appointment</a><br><br>
+<a href="/billing">Billing</a>
+<div class="card">
+<h3>Total Patients</h3>
+<p>{{patients}}</p>
+</div>
+
+<div class="card">
+<h3>Total Doctors</h3>
+<p>{{doctors}}</p>
+</div>
+
+<div class="card">
+<h3>Appointments</h3>
+<p>{{appointments}}</p>
+</div>
+
+</body>
+</html>
