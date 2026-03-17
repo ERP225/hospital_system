@@ -175,7 +175,37 @@ def appointment():
         return redirect("/dashboard")
 
     return render_template("appointment.html", patients=patients, doctors=doctors)
+#EDIT PATIENT 
+@app.route("/edit/<int:id>", methods=["GET","POST"])
+def edit_patient(id):
 
+    con = db()
+    cur = con.cursor()
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        age = request.form.get("age")
+        gender = request.form.get("gender")
+        mobile = request.form.get("mobile")
+
+        cur.execute(
+            "UPDATE patients SET name=?,age=?,gender=?,mobile=? WHERE id=?",
+            (name,age,gender,mobile,id)
+        )
+        con.commit()
+        con.close()
+
+        return redirect("/patients")
+
+    cur.execute("SELECT * FROM patients WHERE id=?", (id,))
+    patient = cur.fetchone()
+    con.close()
+
+    # ✅ ADD THIS CHECK
+    if not patient:
+        return "Patient not found"
+
+    return render_template("edit_patient.html", patient=patient)
 # RUN APP
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

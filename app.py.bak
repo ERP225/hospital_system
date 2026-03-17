@@ -7,29 +7,63 @@ app.secret_key = "hospital123"
 
 # DATABASE CONNECTION
 def db():
-    return sqlite3.connect("hospital.db", check_same_thread=False)
+    return sqlite3.connect("hospital.db")
 
-
-# ---------------------- SEARCH ----------------------
-@app.route("/search")
-def search():
-    name = request.args.get("name", "")
-
+# CREATE TABLES (IMPORTANT FOR RENDER)
+def init_db():
     con = db()
     cur = con.cursor()
 
-    cur.execute(
-        "SELECT * FROM patients WHERE name LIKE ?",
-        ('%' + name + '%',)
-    )
+    cur.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, password TEXT, role TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS patients (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age TEXT, gender TEXT, mobile TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS doctors (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, department TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS appointments (id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, doctor_id INTEGER, date TEXT, time TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS admissions (id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, room TEXT, admission_date TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS billing (id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, service TEXT, amount TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS discharge (id INTEGER PRIMARY KEY AUTOINCREMENT, patient_id INTEGER, discharge_date TEXT, summary TEXT)")
 
-    data = cur.fetchall()
+    # DEFAULT ADMIN USER
+    cur.execute("SELECT * FROM users WHERE username='admin'")
+    if not cur.fetchone():
+        cur.execute("INSERT INTO users(username,password,role) VALUES ('admin','admin','admin')")
+
+    con.commit()
     con.close()
 
-    return render_template("patients.html", patients=data)
+init_db()
 
+# LOGIN
+@app.route("/", methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-# ---------------------- DASHBOARD ----------------------
+        if not username or not password:
+            return render_template("login.html", error="Enter username & password")
+
+        con = db()
+        cur = con.cursor()
+        cur.execute("SELECT * FROM users WHERE username=? AND password=?", (username,password))
+        user = cur.fetchone()
+        con.close()
+
+        if user:
+            session["username"] = user[1]
+            session["role"] = user[3]
+            return redirect("/dashboard")
+        else:
+            return render_template("login.html", error="Invalid Username or Password")
+
+    return render_template("login.html")
+
+# LOGOUT
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+# DASHBOARD
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
@@ -49,97 +83,23 @@ def dashboard():
 
     con.close()
 
-    return render_template(
-        "dashboard.html",
-        patients=patients,
-        doctors=doctors,
-        appointments=appointments
-    )
+    return render_template("dashboard.html", patients=patients, doctors=doctors, appointments=appointments)
 
-
-# ---------------------- LOGIN ----------------------
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-
-        username = request.form["username"]
-        password = request.form["password"]
-
-        con = db()
-        cur = con.cursor()
-
-        cur.execute(
-            "SELECT * FROM users WHERE username=? AND password=?",
-            (username, password)
-        )
-
-        user = cur.fetchone()
-        con.close()
-
-        if user:
-            session["username"] = user[1]
-            session["role"] = user[3]
-            return redirect("/dashboard")
-        else:
-            return render_template("login.html", error="Invalid Username or Password")
-
-    return render_template("login.html")
-
-
-# ---------------------- LOGOUT ----------------------
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-
-# ---------------------- ADD USER ----------------------
-@app.route("/add_user", methods=["GET", "POST"])
-def add_user():
-
-    if session.get("role") != "admin":
-        return "Access Denied"
-
-    if request.method == "POST":
-
-        username = request.form["username"]
-        password = request.form["password"]
-        role = request.form["role"]
-
-        con = db()
-        cur = con.cursor()
-
-        cur.execute(
-            "INSERT INTO users(username,password,role) VALUES (?,?,?)",
-            (username, password, role)
-        )
-
-        con.commit()
-        con.close()
-
-        return redirect("/dashboard")
-
-    return render_template("add_user.html")
-
-
-# ---------------------- ADD PATIENT ----------------------
-@app.route("/add_patient", methods=["GET", "POST"])
+# ADD PATIENT
+@app.route("/add_patient", methods=["GET","POST"])
 def add_patient():
     if request.method == "POST":
+        name = request.form.get("name")
+        age = request.form.get("age")
+        gender = request.form.get("gender")
+        mobile = request.form.get("mobile")
 
-        name = request.form["name"]
-        age = request.form["age"]
-        gender = request.form["gender"]
-        mobile = request.form["mobile"]
+        if not name:
+            return "Name required"
 
         con = db()
         cur = con.cursor()
-
-        cur.execute(
-            "INSERT INTO patients(name,age,gender,mobile) VALUES (?,?,?,?)",
-            (name, age, gender, mobile)
-        )
-
+        cur.execute("INSERT INTO patients(name,age,gender,mobile) VALUES (?,?,?,?)",(name,age,gender,mobile))
         con.commit()
         con.close()
 
@@ -147,37 +107,42 @@ def add_patient():
 
     return render_template("add_patient.html")
 
-
-# ---------------------- VIEW PATIENTS ----------------------
+# VIEW PATIENTS
 @app.route("/patients")
 def patients():
     con = db()
     cur = con.cursor()
-
     cur.execute("SELECT * FROM patients")
     data = cur.fetchall()
+    con.close()
+    return render_template("patients.html", patients=data)
 
+# SEARCH
+@app.route("/search")
+def search():
+    name = request.args.get("name")
+
+    if not name:
+        return redirect("/patients")
+
+    con = db()
+    cur = con.cursor()
+    cur.execute("SELECT * FROM patients WHERE name LIKE ?", ('%'+name+'%',))
+    data = cur.fetchall()
     con.close()
 
     return render_template("patients.html", patients=data)
 
-
-# ---------------------- ADD DOCTOR ----------------------
-@app.route("/add_doctor", methods=["GET", "POST"])
+# ADD DOCTOR
+@app.route("/add_doctor", methods=["GET","POST"])
 def add_doctor():
     if request.method == "POST":
-
-        name = request.form["name"]
-        dept = request.form["dept"]
+        name = request.form.get("name")
+        dept = request.form.get("dept")
 
         con = db()
         cur = con.cursor()
-
-        cur.execute(
-            "INSERT INTO doctors(name,department) VALUES (?,?)",
-            (name, dept)
-        )
-
+        cur.execute("INSERT INTO doctors(name,department) VALUES (?,?)",(name,dept))
         con.commit()
         con.close()
 
@@ -185,9 +150,8 @@ def add_doctor():
 
     return render_template("add_doctor.html")
 
-
-# ---------------------- APPOINTMENT ----------------------
-@app.route("/appointment", methods=["GET", "POST"])
+# APPOINTMENT
+@app.route("/appointment", methods=["GET","POST"])
 def appointment():
     con = db()
     cur = con.cursor()
@@ -199,157 +163,19 @@ def appointment():
     doctors = cur.fetchall()
 
     if request.method == "POST":
+        pid = request.form.get("patient")
+        did = request.form.get("doctor")
+        date = request.form.get("date")
+        time = request.form.get("time")
 
-        pid = request.form["patient"]
-        did = request.form["doctor"]
-        date = request.form["date"]
-        time = request.form["time"]
-
-        cur.execute(
-            "INSERT INTO appointments(patient_id,doctor_id,date,time) VALUES (?,?,?,?)",
-            (pid, did, date, time)
-        )
-
+        cur.execute("INSERT INTO appointments(patient_id,doctor_id,date,time) VALUES (?,?,?,?)",(pid,did,date,time))
         con.commit()
         con.close()
 
         return redirect("/dashboard")
 
-    con.close()
     return render_template("appointment.html", patients=patients, doctors=doctors)
 
-
-# ---------------------- ADMISSION ----------------------
-@app.route("/admission", methods=["GET", "POST"])
-def admission():
-    con = db()
-    cur = con.cursor()
-
-    cur.execute("SELECT * FROM patients")
-    patients = cur.fetchall()
-
-    if request.method == "POST":
-
-        pid = request.form["patient"]
-        room = request.form["room"]
-        date = request.form["date"]
-
-        cur.execute(
-            "INSERT INTO admissions(patient_id,room,admission_date) VALUES (?,?,?)",
-            (pid, room, date)
-        )
-
-        con.commit()
-        con.close()
-
-        return redirect("/dashboard")
-
-    con.close()
-    return render_template("admission.html", patients=patients)
-
-
-# ---------------------- BILLING ----------------------
-@app.route("/billing", methods=["GET", "POST"])
-def billing():
-    con = db()
-    cur = con.cursor()
-
-    cur.execute("SELECT * FROM patients")
-    patients = cur.fetchall()
-
-    if request.method == "POST":
-
-        pid = request.form["patient"]
-        service = request.form["service"]
-        amount = request.form["amount"]
-
-        cur.execute(
-            "INSERT INTO billing(patient_id,service,amount) VALUES (?,?,?)",
-            (pid, service, amount)
-        )
-
-        con.commit()
-        con.close()
-
-        return redirect("/dashboard")
-
-    con.close()
-    return render_template("billing.html", patients=patients)
-
-
-# ---------------------- EDIT PATIENT ----------------------
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit_patient(id):
-    con = db()
-    cur = con.cursor()
-
-    if request.method == "POST":
-
-        name = request.form["name"]
-        age = request.form["age"]
-        gender = request.form["gender"]
-        mobile = request.form["mobile"]
-
-        cur.execute(
-            "UPDATE patients SET name=?,age=?,gender=?,mobile=? WHERE id=?",
-            (name, age, gender, mobile, id)
-        )
-
-        con.commit()
-        con.close()
-
-        return redirect("/patients")
-
-    cur.execute("SELECT * FROM patients WHERE id=?", (id,))
-    patient = cur.fetchone()
-
-    con.close()
-
-    return render_template("edit_patient.html", patient=patient)
-
-
-# ---------------------- DELETE PATIENT ----------------------
-@app.route("/delete/<int:id>")
-def delete(id):
-    con = db()
-    cur = con.cursor()
-
-    cur.execute("DELETE FROM patients WHERE id=?", (id,))
-    con.commit()
-    con.close()
-
-    return redirect("/patients")
-
-
-# ---------------------- DISCHARGE ----------------------
-@app.route("/discharge", methods=["GET", "POST"])
-def discharge():
-    con = db()
-    cur = con.cursor()
-
-    cur.execute("SELECT * FROM patients")
-    patients = cur.fetchall()
-
-    if request.method == "POST":
-
-        pid = request.form["patient"]
-        date = request.form["date"]
-        summary = request.form["summary"]
-
-        cur.execute(
-            "INSERT INTO discharge(patient_id,discharge_date,summary) VALUES (?,?,?)",
-            (pid, date, summary)
-        )
-
-        con.commit()
-        con.close()
-
-        return redirect("/dashboard")
-
-    con.close()
-    return render_template("discharge.html", patients=patients)
-
-
-# ---------------------- RUN APP ----------------------
+# RUN APP
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
