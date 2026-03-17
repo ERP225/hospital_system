@@ -178,47 +178,58 @@ def appointment():
 
     return render_template("appointment.html", patients=patients, doctors=doctors)
 	
-#ADD USER 
-@app.route("/add_user",methods=["GET","POST"])
+# ADD USER
+@app.route("/add_user", methods=["GET", "POST"])
 def add_user():
-	if session.get("role")!="admin":
-		return "Access Denied"
-	if request.method =="POST":
-		usernane=request.form.get("username")
-		password=request.form.get("password")
-		role=request.form.get("role")
-		
-		con=db()
-		cur=con.cursor()
-		cur.execute("insert into users (username,password,role)values(?,?,?)",(username,password,role))
-		con.commit()
-		con.clse()
-		return redirect ("/dashboard")
-	return rendor_template("add_user.html")
+    if session.get("role") != "admin":
+        return "Access Denied"
 
-#ADD BILLING
-@app.route("/billing",methods=["GET","POST"])
+    if request.method == "POST":
+        username = request.form.get("username")   # fixed variable name
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        con = db()
+        cur = con.cursor()
+
+        cur.execute(
+            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            (username, password, role)
+        )
+
+        con.commit()
+        con.close()   # fixed spelling
+
+        return redirect("/dashboard")
+
+    return render_template("add_user.html")   # fixed spelling
+
+
+# ADD BILLING
+@app.route("/billing", methods=["GET", "POST"])
 def billing():
-	con=deb()
-	cur=con.cursor()
-	cur.execute("SELECT * FROM patients")
-    patients = cur.fetchall()
-	
-	if request.method =="POST":
-		pid = request.form.get("patient")
+    con = db()   # fixed function name
+    cur = con.cursor()
+
+    cur.execute("SELECT * FROM patients")
+    patients = cur.fetchall()   # fixed indentation
+
+    if request.method == "POST":
+        pid = request.form.get("patient")
         service = request.form.get("service")
         amount = request.form.get("amount")
 
         cur.execute(
-            "INSERT INTO billing(patient_id,service,amount) VALUES (?,?,?)",
-            (pid,service,amount)
+            "INSERT INTO billing (patient_id, service, amount) VALUES (?, ?, ?)",
+            (pid, service, amount)
         )
+
         con.commit()
         con.close()
 
         return redirect("/dashboard")
 
-    return render_template("billing.html", patients=patients)	
+    return render_template("billing.html", patients=patients)
 	
 	
 #EDIT PATIENT 
