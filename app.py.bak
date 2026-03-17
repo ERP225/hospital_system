@@ -179,6 +179,7 @@ def appointment():
     return render_template("appointment.html", patients=patients, doctors=doctors)
 #EDIT PATIENT 
 @app.route("/edit/<int:id>", methods=["GET","POST"])
+
 def edit_patient(id):
 
     con = db()
